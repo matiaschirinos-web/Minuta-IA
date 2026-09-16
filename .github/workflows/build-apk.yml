@@ -50,6 +50,14 @@ jobs:
         with:
           gradle-version: "8.9"
 
+      - name: Ajustar compatibilidad MediaPipe
+        working-directory: extracted/MinutaAI-v0.3-background-offline/android
+        run: |
+          FILE="app/src/main/java/cl/minutaai/app/LocalMinuteEngine.kt"
+          sed -i '/\.setTopK(20)/d' "$FILE"
+          sed -i '/\.setTemperature(0.2f)/d' "$FILE"
+          sed -i '/\.setRandomSeed(42)/d' "$FILE"
+
       - name: Compilar APK
         working-directory: extracted/MinutaAI-v0.3-background-offline/android
         run: |
