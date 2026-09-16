@@ -52,7 +52,9 @@ jobs:
 
       - name: Compilar APK
         working-directory: extracted/MinutaAI-v0.3-background-offline/android
-        run: gradle --no-daemon assembleDebug
+        run: |
+          echo "android.useAndroidX=true" >> gradle.properties
+          gradle --no-daemon assembleDebug
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
