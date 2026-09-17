@@ -14,10 +14,10 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Descomprimir proyecto
+      - name: Descomprimir Minuta IA V0.4
         run: |
           mkdir extracted
-          unzip -q MinutaAI-v0.3-background-offline-buildready-source.zip -d extracted
+          unzip -q MinutaAI-v0.4-vosk-background-source.zip -d extracted
 
       - name: Configurar Java 17
         uses: actions/setup-java@v5
@@ -50,23 +50,22 @@ jobs:
         with:
           gradle-version: "8.9"
 
-      - name: Ajustar compatibilidad MediaPipe
-        working-directory: extracted/MinutaAI-v0.3-background-offline/android
+      - name: Descargar modelo español Vosk
         run: |
-          FILE="app/src/main/java/cl/minutaai/app/LocalMinuteEngine.kt"
-          sed -i '/\.setTopK(20)/d' "$FILE"
-          sed -i '/\.setTemperature(0.2f)/d' "$FILE"
-          sed -i '/\.setRandomSeed(42)/d' "$FILE"
+          mkdir -p extracted/MinutaAI-v0.4-vosk-background/android/app/src/main/assets
 
-      - name: Compilar APK
-        working-directory: extracted/MinutaAI-v0.3-background-offline/android
+          curl -L --fail --retry 3 \
+            https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip \
+            -o extracted/MinutaAI-v0.4-vosk-background/android/app/src/main/assets/vosk-model-small-es-0.42.zip
+
+      - name: Compilar APK V0.4
+        working-directory: extracted/MinutaAI-v0.4-vosk-background/android
         run: |
-          echo "android.useAndroidX=true" >> gradle.properties
           gradle --no-daemon assembleDebug
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
-          name: MinutaAI-v0.3-APK
-          path: extracted/MinutaAI-v0.3-background-offline/android/app/build/outputs/apk/debug/app-debug.apk
+          name: MinutaAI-v0.4-APK
+          path: extracted/MinutaAI-v0.4-vosk-background/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
