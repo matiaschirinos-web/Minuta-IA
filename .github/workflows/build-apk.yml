@@ -1,4 +1,4 @@
-name: Build Android APK V0.5
+name: Build Android APK V0.6
 
 on:
   workflow_dispatch:
@@ -13,10 +13,10 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Descomprimir proyecto V0.5
+      - name: Descomprimir proyecto V0.6
         run: |
           mkdir extracted
-          unzip -q MinutaAI-v0.5-whisper-balanced-source.zip -d extracted
+          unzip -q MinutaAI-v0.6-work-ready-source.zip -d extracted
 
       - name: Configurar Java 17
         uses: actions/setup-java@v5
@@ -49,30 +49,30 @@ jobs:
 
       - name: Descargar Vosk español
         run: |
-          mkdir -p extracted/MinutaAI-v0.5-whisper-balanced/android/app/src/main/assets
+          mkdir -p extracted/MinutaAI-v0.6-work-ready/android/app/src/main/assets
 
           curl -L --fail --retry 3 \
             https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip \
-            -o extracted/MinutaAI-v0.5-whisper-balanced/android/app/src/main/assets/vosk-model-small-es-0.42.zip
+            -o extracted/MinutaAI-v0.6-work-ready/android/app/src/main/assets/vosk-model-small-es-0.42.zip
 
-      - name: Descargar Whisper Base multilingüe
+      - name: Descargar Whisper Small q5_1 multilingüe
         run: |
-          mkdir -p extracted/MinutaAI-v0.5-whisper-balanced/android/app/src/main/assets/models
+          mkdir -p extracted/MinutaAI-v0.6-work-ready/android/app/src/main/assets/models
 
           curl -L --fail --retry 3 \
-            https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin \
-            -o extracted/MinutaAI-v0.5-whisper-balanced/android/app/src/main/assets/models/ggml-base.bin
+            https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin \
+            -o extracted/MinutaAI-v0.6-work-ready/android/app/src/main/assets/models/ggml-small-q5_1.bin
 
-          test -s extracted/MinutaAI-v0.5-whisper-balanced/android/app/src/main/assets/models/ggml-base.bin
+          test -s extracted/MinutaAI-v0.6-work-ready/android/app/src/main/assets/models/ggml-small-q5_1.bin
 
-      - name: Compilar APK V0.5
-        working-directory: extracted/MinutaAI-v0.5-whisper-balanced/android
+      - name: Compilar APK V0.6
+        working-directory: extracted/MinutaAI-v0.6-work-ready/android
         run: |
           gradle --no-daemon assembleDebug
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
-          name: MinutaAI-v0.5-APK
-          path: extracted/MinutaAI-v0.5-whisper-balanced/android/app/build/outputs/apk/debug/app-debug.apk
+          name: MinutaAI-v0.6-APK
+          path: extracted/MinutaAI-v0.6-work-ready/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
